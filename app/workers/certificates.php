@@ -401,10 +401,7 @@ class CertificatesV1 extends Worker
             ->setParam('{{thanks}}', $locale->getText("emails.certificate.thanks"))
             ->setParam('{{signature}}', $locale->getText("emails.certificate.signature"))
             ->setParam('{{project}}', 'Console')
-            ->setParam('{{direction}}', $locale->getText('settings.direction'))
-            ->setParam('{{bg-body}}', '#f7f7f7')
-            ->setParam('{{bg-content}}', '#ffffff')
-            ->setParam('{{text-content}}', '#000000');
+            ->setParam('{{direction}}', $locale->getText('settings.direction'));
 
         $body = $body->render();
         $mail = new Mail();
