@@ -385,28 +385,32 @@ class CertificatesV1 extends Worker
             $locale->setDefault('en');
         }
 
-        $body = Template::fromFile(__DIR__ . '/../config/locale/templates/email-base.tpl');
+        $subject = \sprintf($locale->getText("emails.certificate.subject"), $domain);
 
-            $subject = \sprintf($locale->getText("emails.certificate.subject"), $domain);
-            $body->setParam('{{domain}}', $domain);
-            $body->setParam('{{error}}', $errorMessage);
-            $body->setParam('{{attempt}}', $attempt);
-
-        $body
-            ->setParam('{{subject}}', $subject)
-            ->setParam('{{hello}}', $locale->getText("emails.certificate.hello"))
+        $message = Template::fromFile(__DIR__ . '/../config/locale/templates/email-inner-base.tpl');
+        $message
             ->setParam('{{body}}', $locale->getText("emails.certificate.body"))
-            ->setParam('{{redirect}}', 'https://' . $domain)
+            ->setParam('{{hello}}', $locale->getText("emails.certificate.hello"))
             ->setParam('{{footer}}', $locale->getText("emails.certificate.footer"))
             ->setParam('{{thanks}}', $locale->getText("emails.certificate.thanks"))
-            ->setParam('{{signature}}', $locale->getText("emails.certificate.signature"))
-            ->setParam('{{project}}', 'Console')
-            ->setParam('{{direction}}', $locale->getText('settings.direction'));
+            ->setParam('{{signature}}', $locale->getText("emails.certificate.signature"));
+        $body = $message->render();
 
-        $body = $body->render();
+        $emailVariables = [
+            'direction' => $locale->getText('settings.direction'),
+            'domain' => $domain,
+            'error' => '<br><pre>' . $errorMessage . '</pre>',
+            'attempt' => $attempt,
+            'project' => 'Console',
+            'redirect' => 'https://' . $domain,
+        ];
+
         $mail = new Mail();
         $mail
             ->setRecipient(App::getEnv('_APP_SYSTEM_SECURITY_EMAIL_ADDRESS'))
+            ->setSubject($subject)
+            ->setBody($body)
+            ->setVariables($emailVariables)
             ->setName('Appwrite Administrator')
             ->trigger();
     }
