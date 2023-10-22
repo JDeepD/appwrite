@@ -1,5 +1,4 @@
 const sdk = require('node-appwrite');
-const fs = require('fs');
 
 // Init SDK
 const client = new sdk.Client();
@@ -12,7 +11,7 @@ client
     .setKey('919c2d18fb5d4...a2ae413da83346ad2') // Your secret API key
 ;
 
-const promise = storage.createFile('[BUCKET_ID]', '[FILE_ID]', InputFile.fromPath('/path/to/file.png', 'file.png'));
+const promise = storage.createFile('[BUCKET_ID]', '[FILE_ID]', sdk.InputFile.fromPath('/path/to/file.png', 'file.png'));
 
 promise.then(function (response) {
     console.log(response);
